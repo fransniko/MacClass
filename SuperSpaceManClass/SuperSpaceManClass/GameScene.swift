@@ -1,82 +1,133 @@
-//
-//  GameScene.swift
-//  SuperSpaceManClass
-//
-//  Created by apple on 2018/10/16.
-//  Copyright © 2018年 15130529. All rights reserved.
-//
-
 import SpriteKit
+import CoreMotion
 
 class GameScene: SKScene {
     
-    let backgroundNode = SKSpriteNode(imageNamed: "Background") //SKSPriteNode is a node that used to draw textured sprite
-    let playerNode = SKSpriteNode(imageNamed: "Player") //imageNamed means the node will use the image called Player
-    let orbNode = SKSpriteNode(imageNamed: "PowerUp") //adding a node for PowerUp image
+    let backgroundNode = SKSpriteNode(imageNamed: "Background")
+    let foregroundNode = SKSpriteNode()
+    let playerNode = SKSpriteNode(imageNamed: "Player")
+    let coreMotionManager = CMMotionManager()
+    
+    var impulseCount = 4
     
     let CollisionCategoryPlayer : UInt32 = 0x1 << 1
-    //defines the category to which a physics body belongs to (example: this collision category belongs to Player)
     let CollisionCategoryPowerUpOrbs : UInt32 = 0x1 << 2
     
-    
     required init?(coder aDecoder: NSCoder) {
+        
         super.init(coder: aDecoder)
     }
     
     override init(size: CGSize) {
+        
         super.init(size: size)
         
         physicsWorld.contactDelegate = self
-        physicsWorld.gravity = CGVector(dx: 0.0, dy: -0.1) // modified the world's gravity
         
+        physicsWorld.gravity = CGVector(dx: 0.0, dy: -5.0);
         
         backgroundColor = SKColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
-        isUserInteractionEnabled = true //turns on user interaction in the scene
         
-        //add background
+        isUserInteractionEnabled = true
+        
+        // adding the background
         backgroundNode.size.width = frame.size.width
         backgroundNode.anchorPoint = CGPoint(x: 0.5, y: 0.0)
         backgroundNode.position = CGPoint(x: size.width / 2.0, y: 0.0)
         addChild(backgroundNode)
         
-        //add player
+        //adding foreground
+        addChild(foregroundNode)
+        
+        // add the player
+        playerNode.position = CGPoint(x: size.width / 2.0, y: 180.0)
+        
         playerNode.physicsBody = SKPhysicsBody(circleOfRadius: playerNode.size.width / 2)
-        playerNode.physicsBody?.isDynamic = true
+        playerNode.physicsBody?.isDynamic = false
         
         playerNode.position = CGPoint(x: size.width / 2.0, y: 80.0)
-        playerNode.physicsBody?.linearDamping = 1.0 //the player will fall but slowly due the small value on damping
-        playerNode.physicsBody?.allowsRotation = false //the player will not spin but it will bounce off
+        playerNode.physicsBody?.linearDamping = 1.0
+        playerNode.physicsBody?.allowsRotation = false
         playerNode.physicsBody?.categoryBitMask = CollisionCategoryPlayer
-        playerNode.physicsBody?.contactTestBitMask = CollisionCategoryPowerUpOrbs //notify if this physics body contact with another physics body belongs to PowerUpOrbs category
-        playerNode.physicsBody?.collisionBitMask = 0 //tells SpriteKit not to handle collisions
-        addChild(playerNode)
+        playerNode.physicsBody?.contactTestBitMask = CollisionCategoryPowerUpOrbs
+        playerNode.physicsBody?.collisionBitMask = 0
+        foregroundNode.addChild(playerNode)
         
-        //add orbNode
-        orbNode.position = CGPoint(x: 150.0, y: size.height - 25)
-        orbNode.physicsBody = SKPhysicsBody(circleOfRadius: orbNode.size.width / 2)
-        orbNode.physicsBody?.isDynamic = false
-        orbNode.physicsBody?.categoryBitMask = CollisionCategoryPowerUpOrbs
-        orbNode.physicsBody?.collisionBitMask = 0
-        orbNode.name = "POWER_UP_ORB"
-        addChild(orbNode)
+        var orbNodePosition = CGPoint(x: playerNode.position.x, y: playerNode.position.y + 100)
+        
+        for _ in 0...19 {
+            let orbNode = SKSpriteNode(imageNamed: "PowerUp")
+            
+            orbNodePosition.y += 140
+            orbNode.position = orbNodePosition
+            orbNode.physicsBody = SKPhysicsBody(circleOfRadius: orbNode.size.width / 2)
+            orbNode.physicsBody?.isDynamic = false
+            
+            orbNode.physicsBody?.categoryBitMask = CollisionCategoryPowerUpOrbs
+            orbNode.physicsBody?.collisionBitMask = 0
+            orbNode.name = "POWER_UP_ORB"
+            foregroundNode.addChild(orbNode)
+        }
+        orbNodePosition = CGPoint(x: playerNode.position.x + 50, y: orbNodePosition.y)
+        
+        for _ in 0...19 {
+            let orbNode = SKSpriteNode(imageNamed: "PowerUp")
+            
+            orbNodePosition.y += 140
+            orbNode.position = orbNodePosition
+            orbNode.physicsBody = SKPhysicsBody(circleOfRadius: orbNode.size.width / 2)
+            orbNode.physicsBody?.isDynamic = false
+            
+            orbNode.physicsBody?.categoryBitMask = CollisionCategoryPowerUpOrbs
+            orbNode.physicsBody?.collisionBitMask = 0
+            orbNode.name = "POWER_UP_ORB"
+            foregroundNode.addChild(orbNode)
+        }
+        
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        playerNode.physicsBody?.applyImpulse(CGVector(dx: 0.0, dy: 40.0))
+        
+        if !playerNode.physicsBody!.isDynamic {
+            
+            playerNode.physicsBody?.isDynamic = true
+            
+            coreMotionManager.accelerometerUpdateInterval = 0.3
+            coreMotionManager.startAccelerometerUpdates()
+            
+        }
+        
+        if impulseCount > 0 {
+            
+            playerNode.physicsBody!.applyImpulse(CGVector(dx: 0.0, dy: 40.0))
+            impulseCount -= 1
+        }
+        
     }
     
-    
-}
-
-extension GameScene: SKPhysicsContactDelegate { //extension of GameScene
-    func didBegin(_ contact: SKPhysicsContact) {
+    override func update(_ currentTime: TimeInterval) {
         
-        let nodeB = contact.bodyB.node
-        
-        if nodeB?.name == "POWER_UP_ORB" {
-            nodeB?.removeFromParent()
+        if playerNode.position.y >= 180.0 {
+            
+            backgroundNode.position = CGPoint(x: backgroundNode.position.x, y: -((playerNode.position.y - 180.0)/16))
+            
+            foregroundNode.position = CGPoint(x: foregroundNode.position.x, y: -(playerNode.position.y - 180.0))
         }
     }
+    
+    deinit {
+        coreMotionManager.stopAccelerometerUpdates()
+    }
+    
 }
 
-//creating GameScene background for the first time
+extension GameScene: SKPhysicsContactDelegate {
+    
+    func didBegin(_ contact: SKPhysicsContact) {
+        let nodeB = contact.bodyB.node!
+        if nodeB.name == "POWER_UP_ORB"  {
+            impulseCount += 1
+            nodeB.removeFromParent()
+        } }
+}
+
