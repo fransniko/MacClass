@@ -18,6 +18,8 @@ class GameScene: SKScene {
     let CollisionCategoryPowerUpOrbs : UInt32 = 0x1 << 2
     let CollisionCategoryBlackHoles : UInt32 = 0x1 << 3
     
+    var engineExhaust: SKEmitterNode?
+    
     required init?(coder aDecoder: NSCoder) {
         
         super.init(coder: aDecoder)
@@ -67,6 +69,16 @@ class GameScene: SKScene {
         playerNode.physicsBody?.contactTestBitMask = CollisionCategoryPowerUpOrbs | CollisionCategoryBlackHoles
         playerNode.physicsBody?.collisionBitMask = 0
         foregroundNode.addChild(playerNode)
+        
+        //        let pathToEmitter = Bundle.main.path(forResource: "MyParticle", ofType: "sks")
+        //        let emitter = NSKeyedUnarchiver.unarchiveObject(withFile: pathToEmitter!) as? SKEmitterNode
+        //        foregroundNode.addChild(emitter!)
+        
+        let engineExhaustPath = Bundle.main.path(forResource: "EngineExhaust", ofType: "sks")
+        engineExhaust = NSKeyedUnarchiver.unarchiveObject(withFile: engineExhaustPath!) as? SKEmitterNode
+        engineExhaust?.position = CGPoint(x: 0.0, y: -(playerNode.size.height / 2))
+        playerNode.addChild(engineExhaust!)
+        engineExhaust?.isHidden = false
         
         
         func addOrbsToForeground(){
@@ -145,6 +157,8 @@ class GameScene: SKScene {
         addBlackHolesToForeground()
         
         
+        
+        
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -162,6 +176,15 @@ class GameScene: SKScene {
             
             playerNode.physicsBody!.applyImpulse(CGVector(dx: 0.0, dy: 40.0))
             impulseCount -= 1
+            
+            engineExhaust?.isHidden = false
+            
+            Timer.scheduledTimer(timeInterval: 0.5, //provide period for time
+                target: self,
+                selector: #selector(GameScene.hideEngineExhaust(_:)),
+                userInfo: nil,
+                repeats: false)
+            
         }
         
     }
@@ -189,6 +212,12 @@ class GameScene: SKScene {
         coreMotionManager.stopAccelerometerUpdates()
     }
     
+    @objc func hideEngineExhaust(_ timer:Timer!){
+        if !engineExhaust!.isHidden { // !---! means 1st ! = equal to false
+            engineExhaust?.isHidden = true
+        }
+    }
+    
 }
 
 extension GameScene: SKPhysicsContactDelegate {
@@ -214,5 +243,7 @@ extension GameScene: SKPhysicsContactDelegate {
         }
         
     }
+    
+    
 }
 
