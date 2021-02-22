@@ -14,6 +14,9 @@
 		180AD5962175854D0083B732 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 180AD5942175854D0083B732 /* LaunchScreen.storyboard */; };
 		180AD5A321758B370083B732 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 180AD5A121758B370083B732 /* Images.xcassets */; };
 		180AD5A421758B370083B732 /* sprites.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 180AD5A221758B370083B732 /* sprites.atlas */; };
+		18117D30218804C300E6046D /* MyParticle.sks in Resources */ = {isa = PBXBuildFile; fileRef = 18117D2E218804C300E6046D /* MyParticle.sks */; };
+		18117D31218804C300E6046D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 18117D2F218804C300E6046D /* Assets.xcassets */; };
+		18117D33218804DC00E6046D /* EngineExhaust.sks in Resources */ = {isa = PBXBuildFile; fileRef = 18117D32218804DC00E6046D /* EngineExhaust.sks */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +29,9 @@
 		180AD5972175854D0083B732 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		180AD5A121758B370083B732 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		180AD5A221758B370083B732 /* sprites.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = sprites.atlas; sourceTree = "<group>"; };
+		18117D2E218804C300E6046D /* MyParticle.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = MyParticle.sks; sourceTree = "<group>"; };
+		18117D2F218804C300E6046D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		18117D32218804DC00E6046D /* EngineExhaust.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = EngineExhaust.sks; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +66,9 @@
 			children = (
 				180AD5852175854D0083B732 /* AppDelegate.swift */,
 				180AD58B2175854D0083B732 /* GameScene.swift */,
+				18117D2E218804C300E6046D /* MyParticle.sks */,
+				18117D2F218804C300E6046D /* Assets.xcassets */,
+				18117D32218804DC00E6046D /* EngineExhaust.sks */,
 				180AD58D2175854D0083B732 /* GameViewController.swift */,
 				180AD58F2175854D0083B732 /* Main.storyboard */,
 				180AD5942175854D0083B732 /* LaunchScreen.storyboard */,
@@ -133,6 +142,9 @@
 				180AD5912175854D0083B732 /* Main.storyboard in Resources */,
 				180AD5A321758B370083B732 /* Images.xcassets in Resources */,
 				180AD5962175854D0083B732 /* LaunchScreen.storyboard in Resources */,
+				18117D33218804DC00E6046D /* EngineExhaust.sks in Resources */,
+				18117D31218804C300E6046D /* Assets.xcassets in Resources */,
+				18117D30218804C300E6046D /* MyParticle.sks in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
